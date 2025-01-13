@@ -1,0 +1,13 @@
+{
+    "manifest_version": 3,
+    "name": "Markdown Link Copier",
+    "version": "1.0",
+    "description": "Copy the current page's title and URL as a Markdown link.",
+    "permissions": ["activeTab", "clipboardWrite"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_title": "Copy Markdown Link"
+    }
+}  
