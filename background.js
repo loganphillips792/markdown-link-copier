@@ -29,3 +29,21 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     }
 });
 
+chrome.commands.onCommand.addListener((command) => {
+    if (command === "copy_link_as_markdown") {
+        // Get the active tab in the current window.
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs.length === 0) return;
+
+            const tab = tabs[0];
+            const markdown = `[${tab.title}](${tab.url})`;
+
+            // Use the Scripting API to copy to clipboard
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: (text) => navigator.clipboard.writeText(text),
+                args: [markdown]
+            });
+        });
+    }
+});

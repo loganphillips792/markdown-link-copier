@@ -10,5 +10,13 @@
     ],
     "background": {
         "service_worker": "background.js"
+    },
+    "commands": {
+        "copy_link_as_markdown": {
+            "suggested_key": {
+                "default": "Alt+Shift+M"
+            },
+            "description": "Copy the current tab as a Markdown link"
+        }
     }
 }
