@@ -1,13 +1,14 @@
 {
-    "manifest_version": 3,
-    "name": "Markdown Link Copier",
+    "name": "Copy Link as Markdown",
     "version": "1.0",
-    "description": "Copy the current page's title and URL as a Markdown link.",
-    "permissions": ["activeTab", "clipboardWrite"],
+    "manifest_version": 3,
+    "description": "Adds a context menu item to copy the current page (or link) as a Markdown link.",
+    "permissions": [
+        "contextMenus",
+        "activeTab",
+        "scripting"
+    ],
     "background": {
         "service_worker": "background.js"
-    },
-    "action": {
-        "default_title": "Copy Markdown Link"
     }
-}  
+}
