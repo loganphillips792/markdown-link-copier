@@ -9,41 +9,41 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
-// Listen for clicks on the context menu item.
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === "copyLinkAsMarkdown") {
+// Helper function to copy text to clipboard via the page context
+async function copyToClipboard(tabId, text) {
+    await chrome.scripting.executeScript({
+        target: { tabId },
+        func: (text) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        },
+        args: [text]
+    });
+}
 
-        // Decide whether it's a link URL or the current tab's URL
+// Listen for clicks on the context menu item.
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+    if (info.menuItemId === "copyLinkAsMarkdown") {
         const url = info.linkUrl ? info.linkUrl : tab.url;
         const title = tab.title;
-
-        // Construct the Markdown link
         const markdown = `[${title}](${url})`;
-
-        // Use the Scripting API to copy to clipboard
-        chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            func: (text) => navigator.clipboard.writeText(text),
-            args: [markdown]
-        });
+        await copyToClipboard(tab.id, markdown);
     }
 });
 
-chrome.commands.onCommand.addListener((command) => {
+chrome.commands.onCommand.addListener(async (command) => {
     if (command === "copy_link_as_markdown") {
-        // Get the active tab in the current window.
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs.length === 0) return;
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs.length === 0) return;
 
-            const tab = tabs[0];
-            const markdown = `[${tab.title}](${tab.url})`;
-
-            // Use the Scripting API to copy to clipboard
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: (text) => navigator.clipboard.writeText(text),
-                args: [markdown]
-            });
-        });
+        const tab = tabs[0];
+        const markdown = `[${tab.title}](${tab.url})`;
+        await copyToClipboard(tab.id, markdown);
     }
 });
